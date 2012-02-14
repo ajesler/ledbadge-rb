@@ -11,6 +11,9 @@ To set a message that "snows" down at a slow speed, try the following:
 
 This requires you to have `gem` installed, as the trollop and serialport gems are required.
 
+Has not been tested on Windows or OSX yet. Windows may require the install of a driver for the device. The driver is included in the badgesoftware zip (http://codemania.co.nz/badgesoftware.zip). This has the manufacturers program for programming the badge and supports all badge funtionality.
+
+
 ## Badge Documentation 
 
 The badges have a 12 x 36 matrix of LEDs. Messages can be up to 250 characters long.
@@ -18,11 +21,11 @@ The badges have a 12 x 36 matrix of LEDs. Messages can be up to 250 characters l
 Two images of up to 12x384 can be loaded onto the badge. They must be monochrome, with black pixels being LED off, and white pixels being LED on.
 These images may be scrolled, allowing for 10 frames of animation of a scene 12x36. When using both images, 20 frames of animation of may be produced.
 
-See http://www.codemania.co.nz/badge.html for some resources, including a truly awful "description" of the protocol.
+See http://www.codemania.co.nz/badge.html for some resources, including a truly awful "description" of the protocol used to control the badge.
 
 http://zunkworks.com/ProgrammableLEDNameBadges has information on several LED badges. The relevant badge is the last one listed on the page.
 
-Thanks to Dave Leaver (@danzel) for getting the original serial capture from the manufacturers program that allowed the reverse engineering of the protocol. The manufacturers program is available from http://codemania.co.nz/badgesoftware.zip)
+Thanks to Dave Leaver (@danzel) for getting the original serial capture from the manufacturers program that allowed the reverse engineering of the protocol. 
 
 
 ## TODO

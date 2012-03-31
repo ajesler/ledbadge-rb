@@ -11,6 +11,11 @@ To set a message that "snows" down at a slow speed, try the following:
 
     ajesler@ubuntu$ruby message.rb --speed 1 --action SNOW "Hi!"
 
+It defaults to assuming the badge is connected to `"/dev/ttyUSB0"` on linux. You can override this with the `device` option like so:
+
+    ajesler@ubuntu$ruby message.rb --device "/dev/ttyUSB1" "Connected to a different device port."
+
+
 This requires you to have `gem` installed, as the trollop and serialport gems are required.
 
 Has not been tested on Windows or OSX yet. Windows may require the install of a driver for the device. The driver is included in the badgesoftware zip (http://codemania.co.nz/badgesoftware.zip). This has the manufacturers program for programming the badge and supports all badge funtionality.

@@ -3,10 +3,12 @@
 This is a basic ruby script for controlling a B1236 LED badge. These were given out at CodeMania 2012 as name tags for attendees. 
 
 Run the script like so:
+
     ajesler@ubuntu$ruby messages.rb "CodeMania was awesome!"
 
 By default, the message will be displayed scrolling across the badge at maximum speed.
 To set a message that "snows" down at a slow speed, try the following:
+
     ajesler@ubuntu$ruby message.rb --speed 1 --action SNOW "Hi!"
 
 This requires you to have `gem` installed, as the trollop and serialport gems are required.

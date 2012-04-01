@@ -43,6 +43,12 @@ class BadgeTests < Test::Unit::TestCase
 		#                                                          ^ from here on is the message padding to get it to 64 chars
 	end
 
+	def test_packet_checksum
+		d = ""
+		p = Packet.new(0x00, d)
+		c = p.checksum
+	end
+
 
 # BADGE TESTS
 	# you may have to set this correctly before tests will run

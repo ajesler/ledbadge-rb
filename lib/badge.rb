@@ -86,19 +86,6 @@ class B1236
 		puts "Completed"
 
 	end
-
-	def setImage(imgPath, opts={})
-	
-		puts "Setting badge image to #{imgPath}"
-
-		badgePayload = buildImagePayload(imgPath, opts)
-		packets = buildPackets(badgePayload)
-		sendData packets
-
-		puts "Completed"
-
-	end
-
 	# can you clear a message with 0, 2, 0x33, 0 ?
 
 	def buildPayload(message, opts={})
@@ -113,6 +100,18 @@ class B1236
 
 		msgFile = [o[:speed], o[:msgindex], o[:action], message.length].pack("ccac")
 		msgFile += message
+	end
+
+	def setImage(imgPath, opts={})
+	
+		puts "Setting badge image to #{imgPath}"
+
+		badgePayload = buildImagePayload(imgPath, opts)
+		packets = buildPackets(badgePayload)
+		sendData packets
+
+		puts "Completed"
+
 	end
 
 	def buildImagePayload(imagePath, opts={})
@@ -158,6 +157,8 @@ class B1236
 		packets = Array.new
 		addressOffset = 0x00
 
+		puts "payload length: #{payload.length}"
+
 		payload.scan(/.{1,64}/).each do |part|
 
 			p = Packet.new(addressOffset, part)
@@ -186,7 +187,6 @@ class B1236
 		end
 
 		# write closing sequence
-		# program seems to work with out this ...
 		@port.write [0x02,0x33,0x01]
 
 	end

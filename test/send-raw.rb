@@ -19,10 +19,9 @@ badge = B1236.new "/dev/ttyUSB0"
 #badge.setMessage alternatingChars
 #badge.setMessage userAlternatingFont
 
-#t = Time.now.to_i.to_s[4..9]
+t = Time.now.to_i.to_s[4..9]
 #puts "t=#{t}" 
 
-badge.test_write_hex
-#badge.setMessage "Hi"
+badge.setMessage t
 
 #badge.setImage "test-images/12x12-black.bmp" 

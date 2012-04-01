@@ -32,17 +32,26 @@ See http://www.codemania.co.nz/badge.html for some resources, including a truly 
 
 http://zunkworks.com/ProgrammableLEDNameBadges has information on several LED badges. The relevant badge is the last one listed on the page.
 
-Thanks to Dave Leaver (@danzel) for getting the original serial capture from the manufacturers program that allowed the reverse engineering of the protocol. 
+
+Thanks to Dave Leaver (danzel on GitHub) for getting the original serial capture from the manufacturers program that allowed the reverse engineering of the protocol. 
 https://github.com/danzel/CodemaniaBadge/tree/master/Documentation has his documentation on how it was done.
+
+My notes on reversing the protocol are located in docs/*-protocol.txt files.
+
 
 ## TODO
 
-- Support for loading messages without immediately displaying the message
-- Support for uploading of multiple messages at once.
-- Support message order definition eg msg 2,3,4
-- Support for the bold font text display
-- Add documentation to methods and classes
 - Add support for writing images to the badge
+- Support message order definition eg msg 2,3,4
+- Support for uploading of multiple messages at once.
+- Allow use of special animated characters (star,heart,left,right,phone1,phone2,smile,circle,taiji,music,question,full)
+- Add documentation to methods and classes
+<<<<<<< Updated upstream
+- Add support for writing images to the badge
+=======
+- Support for loading messages without immediately displaying the message
+- ~~DONE - Enable messages to use the bold font.~~
+>>>>>>> Stashed changes
 
 
 ## Other libraries

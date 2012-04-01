@@ -49,10 +49,11 @@ My notes on reversing the protocol are located in docs/*-protocol.txt files.
 - Support for loading messages without immediately displaying the message
 
 ### Bugs
-- Remove the X from displaying when setting the message. The manufacturers program does not do this.
-- Issues when sending messages of length 10 to the device? - message is sent, but badge get stuck showing the X, never shows the new message. Possibly also 14.
+None active
 
 ### Completed / Fixed
+- ~~BUG - Remove the X from displaying when setting the message. The manufacturers program does not do this.~~
+- ~~BUG - Issues when sending messages of length 10 to the device? - message is sent, but badge get stuck showing the X, never shows the new message. Possibly also 14.~~
 - ~~Feature - Enable messages to use the bold font.~~
 
 

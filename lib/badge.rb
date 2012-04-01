@@ -13,7 +13,7 @@ class LedActions
 	FLASH	  = 'D'
 	HOLDFRAME = 'E'
 
-	def LedActions.fromString(val)
+	def LedActions.from_string(val)
 		raise "Invalid LedAction #{val}" unless ALL.has_key? val
 		ALL[val]
 	end
@@ -31,6 +31,23 @@ end
 class Fonts
 	NORMAL = "\xff\x80"
 	BOLD   = "\xff\x81"
+end
+
+class SpecialCharacters
+	STAR 	 = "\xc0\x14"
+	HEART 	 = "\xc0\x00"
+	LEFT 	 = "\xc0\x08"
+	RIGHT 	 = "\xc0\x04"
+	PHONE1 	 = "\xc0\x06"
+	PHONE2 	 = "\xc0\x02"
+	SMILE 	 = "\xc0\x0a"
+	CIRCLE   = "\xc0\x0c"
+	QUESTION = "\xc0\x0e"
+	TAIJI 	 = "\xc0\x10"
+	MUSIC 	 = "\xc0\x12"
+	FULL 	 = "\xc0\x16"
+
+	ALL 	 = STAR+HEART+LEFT+RIGHT+PHONE1+PHONE2+SMILE+CIRCLE+TAIJI+MUSIC+QUESTION+FULL
 end
 
 class Packet
@@ -84,14 +101,14 @@ class B1236
 		@port.close
 	end
 
-	def setMessage(message, opts={})
+	def set_message(message, opts={})
 	
 		raise "Message cannot have a length greater than 250 characters. Your message was #{message.length} characters" unless message.length <= 250
 
 		puts "Setting badge message to #{message}"
 
-		badgePayload = buildPayload(message, opts)
-		packets = buildPackets(badgePayload)
+		badgePayload = build_payload(message, opts)
+		packets = build_packets(badgePayload)
 		send_packets packets
 
 		puts "Completed"
@@ -99,7 +116,7 @@ class B1236
 	end
 	# can you clear a message with 0, 2, 0x33, 0 ?
 
-	def buildPayload(message, opts={})
+	def build_payload(message, opts={})
 
 		o = {
 	     :speed => 5,
@@ -117,7 +134,7 @@ class B1236
 
 	end
 
-	def buildPackets(payload)
+	def build_packets(payload)
 
 		packets = Array.new
 		addressOffset = 0x00

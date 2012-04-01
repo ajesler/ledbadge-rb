@@ -7,20 +7,20 @@ class BadgeTests < Test::Unit::TestCase
 
 	def test_fromString_SCROLL
 		s = 'SCROLL'
-		n = LedActions.fromString s
+		n = LedActions.from_string s
 		assert_equal(LedActions::SCROLL, n)
 	end
 
 	def test_fromString_HOLDFRAME
 		s = 'HOLDFRAME'
-		n = LedActions.fromString s
+		n = LedActions.from_string s
 		assert_equal(LedActions::HOLDFRAME, n)
 	end
 
 	def test_fromString_INVALID
 		s = 'I'
 		assert_raise_message RuntimeError, /Invalid LedAction/ do
-			LedActions.fromString s
+			LedActions.from_string s
 		end
 	end
 
@@ -44,9 +44,10 @@ class BadgeTests < Test::Unit::TestCase
 	end
 
 	def test_packet_checksum
-		d = ""
+		d = []
 		p = Packet.new(0x00, d)
 		c = p.checksum
+		# TODO
 	end
 
 
@@ -56,52 +57,52 @@ class BadgeTests < Test::Unit::TestCase
 
 	def test_buildPayload
 		d = "Hello!"
-		o = B.buildPayload d
+		o = B.build_payload d
 		assert_equal("\005\001B\006Hello!", o)
 	end
 
 	def test_buildPayload_with_speed
 		d = "Hello!"
-		o = B.buildPayload(d, {:speed=>1})
+		o = B.build_payload(d, {:speed=>1})
 		assert_equal("\001\001B\006Hello!", o)
 	end
 
 	def test_buildPayload_with_index
 		d = "Hello!"
-		o = B.buildPayload(d, {:msgindex=>4})
+		o = B.build_payload(d, {:msgindex=>4})
 		assert_equal("\005\004B\006Hello!", o)
 	end
 
 	def test_buildPayload_with_index_too_low_zero
 		d = "Hello!"
 		assert_raise_message RuntimeError, /index must be between 1 and 6/ do
-			B.buildPayload(d, {:msgindex=>0})
+			B.build_payload(d, {:msgindex=>0})
 		end
 	end
 
 	def test_buildPayload_with_index_too_low
 		d = "Hello!"
 		assert_raise_message RuntimeError, /index must be between 1 and 6/ do
-			B.buildPayload(d, {:msgindex=>-1})
+			B.build_payload(d, {:msgindex=>-1})
 		end
 	end
 
 	def test_buildPayload_with_index_too_high
 		d = "Hello!"
 		assert_raise_message RuntimeError, /index must be between 1 and 6/ do
-			B.buildPayload(d, {:msgindex=>7})
+			B.build_payload(d, {:msgindex=>7})
 		end
 	end
 
 	def test_buildPayload_with_action
 		d = "Hello!"
-		o = B.buildPayload(d, {:action=>LedActions::SNOW})
+		o = B.build_payload(d, {:action=>LedActions::SNOW})
 		assert_equal("\005\001C\006Hello!", o)
 	end
 
 	def test_buildPayload_with_all_options
 		d = "Hello!"
-		o = B.buildPayload(d, {:speed=>4,:msgindex=>3,:action=>LedActions::FLASH})
+		o = B.build_payload(d, {:speed=>4,:msgindex=>3,:action=>LedActions::FLASH})
 		assert_equal("\004\003D\006Hello!", o)
 	end
 

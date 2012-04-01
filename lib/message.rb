@@ -17,7 +17,7 @@ end
 
 if !opts[:action].nil?
 	# get the correct action if one was set
-	opts[:action] = LedActions.fromString opts[:action]
+	opts[:action] = LedActions.from_string opts[:action]
 end
 
 # get the device name or use the default
@@ -29,4 +29,4 @@ opts.reject!{ |key, value| value == nil}
 # create a new device
 updater = B1236.new device
 # set the messages, with the set options
-updater.setMessage(ARGV[0], opts)
+updater.set_message(ARGV[0], opts)

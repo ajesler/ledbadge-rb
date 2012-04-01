@@ -40,17 +40,20 @@ My notes on reversing the protocol are located in docs/*-protocol.txt files.
 
 ## TODO
 
+### Features
 - Add support for writing images to the badge
 - Support message order definition eg msg 2,3,4
 - Support for uploading of multiple messages at once.
 - Allow use of special animated characters (star,heart,left,right,phone1,phone2,smile,circle,taiji,music,question,full)
 - Add documentation to methods and classes
-<<<<<<< Updated upstream
-- Add support for writing images to the badge
-=======
 - Support for loading messages without immediately displaying the message
-- ~~DONE - Enable messages to use the bold font.~~
->>>>>>> Stashed changes
+
+### Bugs
+- Remove the X from displaying when setting the message. The manufacturers program does not do this.
+- Issues when sending messages of length 10 to the device? - message is sent, but badge get stuck showing the X, never shows the new message.
+
+### Completed / Fixed
+- ~~Feature - Enable messages to use the bold font.~~
 
 
 ## Other libraries

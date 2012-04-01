@@ -1,5 +1,8 @@
 require 'rubygems'
 require 'serialport'
+require 'RMagick'
+
+include Magick
 
 # Available actions for displaying the message
 class LedActions
@@ -77,8 +80,22 @@ class B1236
 		puts "Setting badge message to #{message}"
 
 		badgePayload = buildPayload(message, opts)
-		packets = buildPackets(ADDRESS_START, badgePayload)
+		packets = buildPackets(badgePayload)
 		sendData packets
+
+		puts "Completed"
+
+	end
+
+	def setImage(imgPath, opts={})
+	
+		puts "Setting badge image to #{imgPath}"
+
+		badgePayload = buildImagePayload(imgPath, opts)
+		packets = buildPackets(badgePayload)
+		sendData packets
+
+		puts "Completed"
 
 	end
 
@@ -98,7 +115,45 @@ class B1236
 		msgFile += message
 	end
 
-	def buildPackets(address, payload)
+	def buildImagePayload(imagePath, opts={})
+		o = {
+	     :speed => 5,
+	     :msgindex => 7,
+	     :action => LedActions::SCROLL
+	   }.merge(opts)
+
+	   payload = [o[:speed], o[:msgindex], o[:action]].pack("cca")
+
+	   # load the image
+	   img = Image.read(imagePath)[0]
+	   puts "read in image from #{imagePath} to get #{img}"
+
+	   # width of the image in blocks of 12 pixels
+	   puts img.class
+	   num_blocks = (img.columns.to_i / 12)
+
+	   num_blocks.times do |i|
+	   	 # add image and index offset bytes
+	   	 payload += "\x80"
+	   	 payload += [i].pack("c")
+	   end
+
+	   imgBytes = img_to_bytes img
+
+	end
+
+	def img_to_bytes(img)
+		buf = Array.new
+
+		# round the width to next 12 multiple
+		rWidth = 12 * (1 + (img.columns-1) / 12)
+
+		puts img.rows
+
+		buf
+	end
+
+	def buildPackets(payload)
 
 		packets = Array.new
 		addressOffset = 0x00
@@ -131,6 +186,7 @@ class B1236
 		end
 
 		# write closing sequence
+		# program seems to work with out this ...
 		@port.write [0x02,0x33,0x01]
 
 	end

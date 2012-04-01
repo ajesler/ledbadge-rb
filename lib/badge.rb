@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'enumerator'
 require 'serialport'
 require 'RMagick'
 
@@ -34,6 +35,8 @@ end
 
 class Packet
 
+	BYTES_PER_PACKET = 64
+
 	attr_accessor :command, :sec, :third, :addressOffset, :data
 
 	def initialize(addressOffset, data)
@@ -46,20 +49,28 @@ class Packet
 	end
 
 	def format
-		d = [@command, @sec, @third, @addressOffset, @data].pack("cccca64")
-		d += calcChecksum(d[1..d.length]).chr
+		d = [@command, @sec, @third, @addressOffset].pack("cccc").bytes.to_a
+		d += @data
+		checksum = calcChecksum(d[1..d.length])
+		puts "checksum is #{checksum}"
+		d << checksum
 	end
 
 	def calcChecksum(data)
-		val = data.bytes.inject(0){|sum,item| sum + item}
+		# assumes that data is an array of bytes (fixnums?)
+
+		val = data.inject(0) do |sum,item| 
+			#puts "#{sum}: #{sum.class} - #{item.class}"
+			sum + item
+		end
 		val &= 0xff
+		# should return a single byte
 	end
 
 end
 
 class B1236
 
-	ADDRESS_START = 0x600 # this is the starting address of the memory containing message data?
 	SERIAL_PARAMS = { "stop_bits" => 1, "parity" => SerialPort::NONE, "baud" => 38400 }
 
 	attr_accessor :device_name, :port
@@ -81,7 +92,7 @@ class B1236
 
 		badgePayload = buildPayload(message, opts)
 		packets = buildPackets(badgePayload)
-		sendData packets
+		send_packets packets
 
 		puts "Completed"
 
@@ -98,58 +109,12 @@ class B1236
 
 		raise 'index must be between 1 and 6' unless o[:msgindex] >= 1 && o[:msgindex] <= 6
 
-		msgFile = [o[:speed], o[:msgindex], o[:action], message.length].pack("ccac")
-		msgFile += message
-	end
+		msgFile = [o[:speed].to_s, o[:msgindex].to_s, o[:action], message.length].pack("aaac").bytes.to_a
+		msgFile += message.bytes.to_a
 
-	def setImage(imgPath, opts={})
-	
-		puts "Setting badge image to #{imgPath}"
+		dif =  254 - msgFile.length #Packet::BYTES_PER_PACKET - msgFile.length
+		msgFile += [0x00]*dif unless dif <= 0
 
-		badgePayload = buildImagePayload(imgPath, opts)
-		packets = buildPackets(badgePayload)
-		sendData packets
-
-		puts "Completed"
-
-	end
-
-	def buildImagePayload(imagePath, opts={})
-		o = {
-	     :speed => 5,
-	     :msgindex => 7,
-	     :action => LedActions::SCROLL
-	   }.merge(opts)
-
-	   payload = [o[:speed], o[:msgindex], o[:action]].pack("cca")
-
-	   # load the image
-	   img = Image.read(imagePath)[0]
-	   puts "read in image from #{imagePath} to get #{img}"
-
-	   # width of the image in blocks of 12 pixels
-	   puts img.class
-	   num_blocks = (img.columns.to_i / 12)
-
-	   num_blocks.times do |i|
-	   	 # add image and index offset bytes
-	   	 payload += "\x80"
-	   	 payload += [i].pack("c")
-	   end
-
-	   imgBytes = img_to_bytes img
-
-	end
-
-	def img_to_bytes(img)
-		buf = Array.new
-
-		# round the width to next 12 multiple
-		rWidth = 12 * (1 + (img.columns-1) / 12)
-
-		puts img.rows
-
-		buf
 	end
 
 	def buildPackets(payload)
@@ -159,7 +124,9 @@ class B1236
 
 		puts "payload length: #{payload.length}"
 
-		payload.scan(/.{1,64}/).each do |part|
+		payload.each_slice(64) do |part|
+
+			puts "part length = #{part.length}"
 
 			p = Packet.new(addressOffset, part)
 			packets.push p
@@ -172,23 +139,63 @@ class B1236
 
 	end
 
-	def sendData(packets)
-		
+	def send_packets(packets)
+		sent = []
+
+		initial = [0x00]
+
 		# send initial byte
-		@port.write 0x00
+		send_data(initial, sent)
 
 		# send packets to the badge
 		i = 0
-		packets.each do |p| 
-			d = p.format
+		packets.each do |p|
 			i += 1
 			puts "Sending packet #{i} / #{packets.length}"
-			@port.write p.format 
+			#@port.write p.format
+			send_data(p.format, sent)
 		end
 
 		# write closing sequence
-		@port.write [0x02,0x33,0x01]
+		send_data([0x02,0x33,0x01], sent)
 
+		print_sent_data(sent)
+
+	end
+
+	def send_data(data, arr)
+		s = data.collect{ |v| sprintf("%02X ", v) }
+
+		puts "Sent packet of length #{data.length} #{data.join}"
+
+		@port.write data.join
+		arr << data
+	end
+
+	def print_sent_data(arr, packet_sep = "")
+		result = ""
+
+		dataSize = 0
+
+		arr.each do |p|
+			dataSize += p.length
+			p.each do |h|
+				result += sprintf("%02X ", h)
+			end
+			result += packet_sep
+		end
+
+		puts result
+	end
+
+	def test_write 
+		data = [0x00, 0x02, 0x31, 0x06, 0x00, 0x35, 0x31, 0x42, 0x02, 0x48, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x92, 0x02, 0x31, 0x06, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x77, 0x02, 0x31, 0x06, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb7, 0x02, 0x31, 0x06, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf7, 0x02, 0x33, 0x01]
+		@port.write data
+	end
+
+	def test_write_hex
+		to = %w(00 02 31 06 00 35 31 42 02 48 69 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 92 02 31 06 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 77 02 31 06 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 b7 02 31 06 c0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f7 02 33 01).map{|s| s.hex}.pack('C*')
+		@port.write to
 	end
 
 end

@@ -4,7 +4,7 @@ require '../lib/badge.rb'
 # should produce A bold B normal C bold D normal E
 alternatingChars = "\x41\xff\x81\x42\xff\x80\x43\xff\x81\x44\xff\x80\x45"
 
-alternatingFont = "Hi! "+Fonts::BOLD+"Hi in bold "+Fonts::NORMAL+"normal again"
+alternatingFont = "Hi! "+Fonts::BOLD+"Hi in bold "+Fonts::NORMAL+"normal again2"
 
 l10 = "abcdefghij"
 l11 = "abcdefghijk"
@@ -19,8 +19,10 @@ badge = B1236.new "/dev/ttyUSB0"
 #badge.setMessage alternatingChars
 #badge.setMessage userAlternatingFont
 
-t = Time.now.to_i.to_s[4..9]
-puts "t=#{t}" 
-badge.setMessage alternatingFont
+#t = Time.now.to_i.to_s[4..9]
+#puts "t=#{t}" 
+
+badge.test_write_hex
+#badge.setMessage "Hi"
 
 #badge.setImage "test-images/12x12-black.bmp" 

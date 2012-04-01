@@ -1,5 +1,7 @@
 Text Protocol Documentation
 
+The manufacturers program appears to send a message of length 250, regardless of the actual message size. Looks like it pads with 0x00 characters.  
+
 Fonts:
 
 By default, the normal font is used. You do no need a prefix on the message to specify normal font. 

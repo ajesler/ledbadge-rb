@@ -24,6 +24,11 @@ class LedActions
 	}
 end
 
+class Fonts
+	NORMAL = "\xff\x80"
+	BOLD   = "\xff\x81"
+end
+
 class Packet
 
 	attr_accessor :command, :sec, :third, :addressOffset, :data

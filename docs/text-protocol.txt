@@ -1,0 +1,14 @@
+Text Protocol Documentation
+
+Fonts:
+
+By default, the normal font is used. You do no need a prefix on the message to specify normal font. 
+If you want to use a bold font, 0xff0x81 is used to indicate that the following text should be bold. To switch back to normal text, use 0xff0x80.
+
+Eg 
+
+0d 41 ff 81 42 ff 80 43 ff 81 44 ff 80 45 == A bold B normal C bold D normal E
+
+
+Special Characters?
+When using special charactes, are both forms of the character written to memory each time? Doesnt seem like they are stored on the badge.

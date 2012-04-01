@@ -32,7 +32,6 @@ See http://www.codemania.co.nz/badge.html for some resources, including a truly 
 
 http://zunkworks.com/ProgrammableLEDNameBadges has information on several LED badges. The relevant badge is the last one listed on the page.
 
-
 Thanks to Dave Leaver (danzel on GitHub) for getting the original serial capture from the manufacturers program that allowed the reverse engineering of the protocol. 
 https://github.com/danzel/CodemaniaBadge/tree/master/Documentation has his documentation on how it was done.
 

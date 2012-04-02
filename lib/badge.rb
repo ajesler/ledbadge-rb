@@ -34,6 +34,7 @@ class Fonts
 end
 
 class SpecialCharacters
+	# these are not working properly yet.
 	STAR 	 = "\xc0\x14"
 	HEART 	 = "\xc0\x00"
 	LEFT 	 = "\xc0\x08"
@@ -54,21 +55,21 @@ class Packet
 
 	BYTES_PER_PACKET = 64
 
-	attr_accessor :command, :sec, :third, :addressOffset, :data
+	attr_accessor :command, :unknown, :address1, :address2, :data
 
-	def initialize(addressOffset, data)
+	def initialize(address1, address2, data)
 		@command = 0x02
-		@sec = 0x31
-		@third = 0x06
+		@uknown = 0x31
 
 		raise "data must be of length #{BYTES_PER_PACKET}" unless data.length == BYTES_PER_PACKET
 
-		@addressOffset = addressOffset
+		@address1 = address1
+		@address2 = address2
 		@data = data
 	end
 
 	def format
-		d = [@command, @sec, @third, @addressOffset].pack("cccc").bytes.to_a
+		d = [@command, @uknown, @address1, @address2].pack("cccc").bytes.to_a
 		d += @data
 		checksum = calcChecksum(d[1..d.length])
 		puts "checksum is #{checksum}"
@@ -88,7 +89,7 @@ class Packet
 
 end
 
-class B1236
+class B1236Badge
 
 	SERIAL_PARAMS = { "stop_bits" => 1, "parity" => SerialPort::NONE, "baud" => 38400 }
 
@@ -103,14 +104,38 @@ class B1236
 		@port.close
 	end
 
+	def set_messages(messages)
+		raise "Number of messages must be 1-6" unless between_inclusive(1, 6, messages.length)
+
+		# now iterate through the messages, and set them
+		packets = []
+
+		index = 1
+		address = 0x06
+
+		messages.each do |md|
+			# first val is message array, second is opts
+			m = md[0]
+			mopts = md[1] || {}
+			indexopts = { :msgindex => index }
+			mopts.merge! indexopts
+
+			p = build_payload(m, mopts)
+			packets += build_packets(address, p)
+
+			address += 1
+
+		end
+
+		send_packets(packets, num_messages=messages.length)
+	end
+
 	def set_message(message, opts={})
 	
-		raise "Message cannot have a length greater than 250 characters. Your message was #{message.length} characters" unless message.length <= 250
-
 		puts "Setting badge message to #{message}"
 
 		payload = build_payload(message, opts)
-		packets = build_packets(payload)
+		packets = build_packets(0x60, payload)
 		send_packets packets
 
 		puts "Completed"
@@ -124,9 +149,10 @@ class B1236
 	     :speed => 5,
 	     :msgindex => 1,
 	     :action => LedActions::SCROLL
-	   }.merge(opts)
+	    }.merge(opts)
 
-		raise 'index must be between 1 and 6' unless o[:msgindex] >= 1 && o[:msgindex] <= 6
+	    raise "Message cannot have a length greater than 250 characters. Your message was #{message.length} characters" unless message.length <= 250
+		raise 'index must be between 1 and 6' unless between_inclusive(1, 6, o[:msgindex])
 
 		msgFile = [o[:speed].to_s, o[:msgindex].to_s, o[:action], message.length].pack("aaac").bytes.to_a
 		msgFile += message.bytes.to_a
@@ -143,10 +169,10 @@ class B1236
 
 	end
 
-	def build_packets(payload)
+	def build_packets(address1, payload)
 
 		packets = Array.new
-		addressOffset = 0x00
+		address2 = 0x00
 
 		puts "payload length: #{payload.length}"
 
@@ -154,10 +180,10 @@ class B1236
 
 			puts "part length = #{part.length}"
 
-			p = Packet.new(addressOffset, part)
-			packets.push p
+			p = Packet.new(address1, address2, part)
+			packets << p
 
-			addressOffset += 0x40
+			address2 += 0x40
 
 		end
 
@@ -165,7 +191,7 @@ class B1236
 
 	end
 
-	def send_packets(packets)
+	def send_packets(packets, num_messages=1)
 		sent = []
 
 		initial = [0x00]
@@ -182,8 +208,9 @@ class B1236
 			send_data(p.format, sent)
 		end
 
+		last_byte = lookup_message_count_byte num_messages
 		# write closing sequence
-		send_data([0x02,0x33,0x01], sent)
+		send_data([0x02,0x33,last_byte], sent)
 
 		print_sent_data(sent)
 
@@ -212,6 +239,29 @@ class B1236
 		end
 
 		puts result
+	end
+
+	def lookup_message_count_byte(message_count)
+
+		raise "Message count must be between 1 and 8. #{message_count} is an invalid number" unless between_inclusive(1, 8, message_count)
+
+		mapping = {
+			1 => 0x01,
+			2 => 0x03,
+			3 => 0x07,
+			4 => 0x0f,
+			5 => 0x1f,
+			6 => 0x3f,
+			7 => 0x7f,
+			8 => 0xff
+		}
+
+		mapping[message_count]
+
+	end
+
+	def between_inclusive(min, max, val)
+		val >= min && val <= max
 	end
 
 end

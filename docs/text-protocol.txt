@@ -16,3 +16,29 @@ Special Characters
 These are two bytes, the first of which is \c0.
 Seems to be depended on something unknown, as multiple sequences produce the same character, but may change depending on what else is being sent.
 
+
+Multiple Messages
+Each message has an address offset ? Each contains 4 blocks of 64 bytes that can be written to. 
+The following are the initial addresses for each message.
+06 00 
+07 00
+08 00
+09 00
+0a 00
+0b 00
+
+
+Closing sequence
+[0x02,0x33,0x01] - used when only one message
+[0x02,0x33,0x07] - used when three messages being written
+
+the last byte is a byte with the number of set bits indicating the number of messages written
+
+01 = 1
+03 = 2
+07 = 3
+0f = 4
+1f = 5
+3f = 6
+7f = 7
+ff = 8

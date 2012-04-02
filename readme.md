@@ -15,8 +15,24 @@ It defaults to assuming the badge is connected to `"/dev/ttyUSB0"` on linux. You
 
     ajesler@ubuntu$ruby message.rb --device "/dev/ttyUSB1" "Connected to a different device port."
 
+It is possible to upload multiple messages, using the `B1236Badge.set_messages` method. Input is a 2d array, with the first cell of each nested array holding the string message, and the second holding an optional hash with message options.
 
-This requires you to have `gem` installed, as the trollop and serialport gems are required.
+eg 
+
+    m1 = "Test 1"
+    m2 = "Test 2"
+    m3 = "Test 3"
+    m4 = "Test 4"
+    m5 = "Test 5"
+    m6 = "Test 6"
+    
+    messages = [[m1], [m2, {:speed => 1}], [m3, {:action => LedActions::SNOW}], [m4], [m5], [m6]]
+    badge.set_messages messages
+
+This will cycle through all 6 messages, with the second message being displayed slowly, and the third displayed in the snowing action.
+
+
+ledbadge-rb requires you to have `gem` installed, as the `trollop` and `serialport` gems are required.
 
 Has not been tested on Windows or OSX yet. Windows may require the install of a driver for the device. The driver is included in the badgesoftware zip (http://codemania.co.nz/badgesoftware.zip). This has the manufacturers program for programming the badge and supports all badge funtionality.
 

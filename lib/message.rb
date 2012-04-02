@@ -27,6 +27,6 @@ device = opts[:device] || "/dev/ttyUSB0"
 opts.reject!{ |key, value| value == nil}
 
 # create a new device
-updater = B1236.new device
+updater = B1236Badge.new device
 # set the messages, with the set options
 updater.set_message(ARGV[0], opts)

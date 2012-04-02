@@ -61,6 +61,8 @@ class Packet
 		@sec = 0x31
 		@third = 0x06
 
+		raise "data must be of length #{BYTES_PER_PACKET}" unless data.length == BYTES_PER_PACKET
+
 		@addressOffset = addressOffset
 		@data = data
 	end
@@ -107,8 +109,8 @@ class B1236
 
 		puts "Setting badge message to #{message}"
 
-		badgePayload = build_payload(message, opts)
-		packets = build_packets(badgePayload)
+		payload = build_payload(message, opts)
+		packets = build_packets(payload)
 		send_packets packets
 
 		puts "Completed"
@@ -129,8 +131,15 @@ class B1236
 		msgFile = [o[:speed].to_s, o[:msgindex].to_s, o[:action], message.length].pack("aaac").bytes.to_a
 		msgFile += message.bytes.to_a
 
-		dif =  Packet::BYTES_PER_PACKET - msgFile.length
+		ml = msgFile.length
+		pl = Packet::BYTES_PER_PACKET
+		# works out the next highest multiple of 64 based on 
+		# the message length, and returns the number of 0's 
+		# required to pad to this length
+		dif = (pl * (((ml - 1) / pl) + 1) ) - ml
 		msgFile += [0x00]*dif unless dif <= 0
+		#puts "ml=#{ml}, dif=#{dif}, msgFile=#{msgFile.length}"
+		msgFile
 
 	end
 
@@ -183,7 +192,7 @@ class B1236
 	def send_data(data, arr)
 		s = data.collect{ |v| sprintf("%02X ", v) }
 
-		puts "Sent packet of length #{data.length} #{data.join}"
+		puts "Sent packet of length #{data.length}"
 
 		@port.write data.pack('C*')
 		arr << data

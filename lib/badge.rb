@@ -1,9 +1,8 @@
 require 'rubygems'
 require 'enumerator'
 require 'serialport'
-require 'RMagick'
 
-include Magick
+module B1236
 
 # Available actions for displaying the message
 class LedActions
@@ -89,7 +88,7 @@ class Packet
 
 end
 
-class B1236Badge
+class Badge
 
 	SERIAL_PARAMS = { "stop_bits" => 1, "parity" => SerialPort::NONE, "baud" => 38400 }
 
@@ -135,7 +134,7 @@ class B1236Badge
 		puts "Setting badge message to #{message}"
 
 		payload = build_payload(message, opts)
-		packets = build_packets(0x60, payload)
+		packets = build_packets(0x06, payload)
 		send_packets packets
 
 		puts "Completed"
@@ -263,5 +262,7 @@ class B1236Badge
 	def between_inclusive(min, max, val)
 		val >= min && val <= max
 	end
+
+end
 
 end

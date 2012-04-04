@@ -9,11 +9,11 @@ Run the script like so:
 By default, the message will be displayed scrolling across the badge at maximum speed.
 To set a message that "snows" down at a slow speed, try the following:
 
-    ajesler@ubuntu$ruby message.rb --speed 1 --action SNOW "Hi!"
+    ajesler@ubuntu$ruby message.rb --action SNOW "Hi!"
 
 It defaults to assuming the badge is connected to `"/dev/ttyUSB0"` on linux. You can override this with the `device` option like so:
 
-    ajesler@ubuntu$ruby message.rb --device "/dev/ttyUSB1" "Connected to a different device port."
+    ajesler@ubuntu$ruby message.rb --port "/dev/ttyUSB1" "Connected to a different serial port."
 
 It is possible to upload multiple messages, using the `B1236Badge.set_messages` method. Input is a 2d array, with the first cell of each nested array holding the string message, and the second holding an optional hash with message options.
 
@@ -29,7 +29,7 @@ eg
     messages = [[m1], [m2, {:speed => 1}], [m3, {:action => LedActions::SNOW}], [m4], [m5], [m6]]
     badge.set_messages messages
 
-This will cycle through all 6 messages, with the second message being displayed slowly, and the third displayed in the snowing action.
+This will cycle through all 6 messages, with the second message being displayed slowly, and the third displayed in the snowing action. It is not currently possible to then update only a single message, you must reset all messages if you want to change any of them. 
 
 
 ledbadge-rb requires you to have `gem` installed, as the `trollop` and `serialport` gems are required.
@@ -57,17 +57,18 @@ My notes on reversing the protocol are located in docs/*-protocol.txt files.
 ## TODO
 
 ### Features
-- Add support for writing images to the badge
-- Support message order definition eg msg 2,3,4
-- Support for uploading of multiple messages at once.
+- Add a debug mode that prints out data that is sent, etc. Remove from default code.
+- Writing images to the badge
+- Update a single message when multiple are being displayed. Manufacturers program does not seem able to do this, so not sure if possible. 
 - Allow use of special animated characters (star,heart,left,right,phone1,phone2,smile,circle,taiji,music,question,full)
 - Add documentation to methods and classes
-- Support for loading messages without immediately displaying the message
+- Update tests to reflect changes to badge.rb
 
 ### Bugs
 None active
 
 ### Completed / Fixed
+- ~~Feature - Support for uploading of multiple messages at once.~~
 - ~~BUG - Remove the X from displaying when setting the message. The manufacturers program does not do this.~~
 - ~~BUG - Issues when sending messages of length 10 to the device? - message is sent, but badge get stuck showing the X, never shows the new message. Possibly also 14.~~
 - ~~Feature - Enable messages to use the bold font.~~

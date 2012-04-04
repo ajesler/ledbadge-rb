@@ -32,7 +32,7 @@ Closing sequence
 [0x02,0x33,0x01] - used when only one message
 [0x02,0x33,0x07] - used when three messages being written
 
-the last byte is a byte with the number of set bits indicating the number of messages written
+the last byte int the above array is a byte with the number of set bits indicating the number of messages written
 
 01 = 1
 03 = 2

@@ -1,6 +1,8 @@
 require 'test/unit'
 require '../lib/badge.rb'
 
+include B1236
+
 class BadgeTests < Test::Unit::TestCase
 
 # LEDActions TESTS
@@ -52,7 +54,7 @@ class BadgeTests < Test::Unit::TestCase
 
 # BADGE TESTS
 	# you may have to set this correctly before tests will run
-	B = B1236Badge.new "/dev/ttyUSB0" 
+	B = Badge.new "/dev/ttyUSB1" 
 
 	def build_payload
 		d = "Hello!"

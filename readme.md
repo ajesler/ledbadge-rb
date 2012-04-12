@@ -36,6 +36,11 @@ ledbadge-rb requires you to have `gem` installed, as the `trollop` and `serialpo
 
 Has not been tested on Windows or OSX yet. Windows may require the install of a driver for the device. The driver is included in the badgesoftware zip (http://codemania.co.nz/badgesoftware.zip). This has the manufacturers program for programming the badge and supports all badge funtionality.
 
+### Example Usage
+
+For an example program using the badge code, see `https://gist.github.com/2291504`. This integrates with Skype on Windows to display the number of missed messages, or the last missed message. 
+
+To use, download the three files in the gist above, and then run like so `ruby display-unread-message-count.rb "COM4"` or `ruby display-last-missed-message.rb "COM4"`
 
 ## Badge Documentation 
 

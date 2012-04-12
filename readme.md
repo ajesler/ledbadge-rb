@@ -82,7 +82,7 @@ None active
 ## Other libraries
 
 * https://bitbucket.org/bartj/led - C# by bartj
-* https://github.com/danzel/CodemaniaBadge - A C# game for four badges by danzel
+* https://github.com/danzel/CodemaniaBadge - A C# game for four badges by danzel. Has partial support for images.
 * https://github.com/ghewgill/ledbadge - Python by ghewgill
 
 If you know of any others that exist, please let me know.

@@ -34,7 +34,7 @@ This will cycle through all 6 messages, with the second message being displayed 
 
 ledbadge-rb requires you to have `gem` installed, as the `trollop` and `serialport` gems are required.
 
-Has not been tested on Windows or OSX yet. Windows may require the install of a driver for the device. The driver is included in the badgesoftware zip (http://codemania.co.nz/badgesoftware.zip). This has the manufacturers program for programming the badge and supports all badge funtionality.
+Has not been tested on Windows or OSX yet. Windows may require the install of a driver for the device. The driver is included in the [badgesoftware zip](https://s3.amazonaws.com/public-ajesler-misc/badgesoftware.zip) download. This has the manufacturers program for programming the badge and supports all badge funtionality.
 
 ### Example Usage
 
@@ -49,7 +49,7 @@ The badges have a 12 x 36 matrix of LEDs. Messages can be up to 250 characters l
 Two images of up to 12x384 can be loaded onto the badge. They must be monochrome, with black pixels being LED off, and white pixels being LED on.
 These images may be scrolled, allowing for 10 frames of animation of a scene 12x36. When using both images, 20 frames of animation of may be produced.
 
-See http://www.codemania.co.nz/badge.html for some resources, including a truly awful "description" of the protocol used to control the badge.
+A truly awful description of the [badge protocol](https://s3.amazonaws.com/public-ajesler-misc/badgeprotocol.pdf) is available. Also see the B1236 Manual of English.pdf available in the [badgesoftware zip](https://s3.amazonaws.com/public-ajesler-misc/badgesoftware.zip).
 
 http://zunkworks.com/ProgrammableLEDNameBadges has information on several LED badges. The relevant badge is the last one listed on the page.
 
@@ -68,15 +68,6 @@ My notes on reversing the protocol are located in docs/*-protocol.txt files.
 - Allow use of special animated characters (star,heart,left,right,phone1,phone2,smile,circle,taiji,music,question,full)
 - Add documentation to methods and classes
 - Update tests to reflect changes to badge.rb
-
-### Bugs
-None active
-
-### Completed / Fixed
-- ~~Feature - Support for uploading of multiple messages at once.~~
-- ~~BUG - Remove the X from displaying when setting the message. The manufacturers program does not do this.~~
-- ~~BUG - Issues when sending messages of length 10 to the device? - message is sent, but badge get stuck showing the X, never shows the new message. Possibly also 14.~~
-- ~~Feature - Enable messages to use the bold font.~~
 
 
 ## Other libraries

@@ -38,7 +38,7 @@ Has not been tested on Windows or OSX yet. Windows may require the install of a 
 
 ### Example Usage
 
-For an example program using the badge code, see `https://gist.github.com/2291504`. This integrates with Skype on Windows to display the number of missed messages, or the last missed message. 
+For an example program using the badge code, see https://gist.github.com/2291504. This integrates with Skype on Windows to display the number of missed messages, or the last missed message. 
 
 To use, download the three files in the gist above, and then run like so `ruby display-unread-message-count.rb "COM4"` or `ruby display-last-missed-message.rb "COM4"`
 

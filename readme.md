@@ -76,5 +76,6 @@ My notes on reversing the protocol are located in docs/*-protocol.txt files.
 * https://github.com/danzel/CodemaniaBadge - A C# game for four badges by danzel. Has partial support for images.
 * https://github.com/ghewgill/ledbadge - Python by ghewgill
 * https://github.com/mrdc/badgeup - Python and C# implementations by mrdc
+* https://metacpan.org/pod/Device::MiniLED - A perl library by Kerry Schwab
 
 If you know of any others that exist, please let me know.
